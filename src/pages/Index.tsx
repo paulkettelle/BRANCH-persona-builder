@@ -1,13 +1,54 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { HeroSection } from "@/components/HeroSection";
+import { PersonaWizard } from "@/components/PersonaWizard";
+import { PersonaCard } from "@/components/PersonaCard";
+import { PersonaData } from "@/types/persona";
+
+type View = "hero" | "wizard" | "result";
 
 const Index = () => {
+  const [view, setView] = useState<View>("hero");
+  const [personaData, setPersonaData] = useState<PersonaData | null>(null);
+
+  const handleStartWizard = () => {
+    setView("wizard");
+  };
+
+  const handleCompleteWizard = (data: PersonaData) => {
+    setPersonaData(data);
+    setView("result");
+  };
+
+  const handleBackToWizard = () => {
+    setView("wizard");
+  };
+
+  const handleBackToHero = () => {
+    setView("hero");
+  };
+
+  const handleStartOver = () => {
+    setPersonaData(null);
+    setView("hero");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="min-h-screen bg-background">
+      {view === "hero" && <HeroSection onStart={handleStartWizard} />}
+      {view === "wizard" && (
+        <PersonaWizard
+          onComplete={handleCompleteWizard}
+          onBack={handleBackToHero}
+        />
+      )}
+      {view === "result" && personaData && (
+        <PersonaCard
+          data={personaData}
+          onBack={handleBackToWizard}
+          onStartOver={handleStartOver}
+        />
+      )}
+    </main>
   );
 };
 
