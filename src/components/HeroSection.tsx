@@ -9,22 +9,6 @@ interface HeroSectionProps {
 export function HeroSection({ onStart }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
-      {/* Floating Avatars */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="animate-float absolute top-[15%] left-[10%] md:left-[15%]">
-          <AvatarIllustration variant={1} size="lg" />
-        </div>
-        <div className="animate-float-delayed absolute top-[20%] right-[8%] md:right-[12%]">
-          <AvatarIllustration variant={2} size="md" />
-        </div>
-        <div className="animate-float-slow absolute bottom-[25%] left-[5%] md:left-[12%]">
-          <AvatarIllustration variant={3} size="md" />
-        </div>
-        <div className="animate-float absolute bottom-[20%] right-[10%] md:right-[15%]">
-          <AvatarIllustration variant={4} size="lg" />
-        </div>
-      </div>
-
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         {/* Agency Logo/Badge */}
