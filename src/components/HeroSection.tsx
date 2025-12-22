@@ -1,6 +1,6 @@
-import { AvatarIllustration } from "./AvatarIllustration";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import branchLogo from "@/assets/branch-logo.png";
 
 interface HeroSectionProps {
   onStart: () => void;
@@ -9,6 +9,11 @@ interface HeroSectionProps {
 export function HeroSection({ onStart }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
+      {/* Logo */}
+      <div className="absolute top-6 left-6 md:top-8 md:left-8">
+        <img src={branchLogo} alt="Branch logo" className="h-12 md:h-16 w-auto" />
+      </div>
+
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         {/* Agency Logo/Badge */}
