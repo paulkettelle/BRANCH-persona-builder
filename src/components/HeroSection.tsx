@@ -25,7 +25,7 @@ export function HeroSection({ onStart }: HeroSectionProps) {
 
         {/* Main Headline */}
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-medium text-foreground mb-6 animate-slide-up leading-tight">
-          Persona Building Tool
+          Persona Builder
         </h1>
 
         {/* Subtitle */}
