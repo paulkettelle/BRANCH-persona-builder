@@ -10,9 +10,9 @@ export function HeroSection({ onStart }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
       {/* Logo */}
-      <div className="absolute top-6 left-6 md:top-8 md:left-8">
+      <a href="https://branchstrategies.co" target="_blank" rel="noopener noreferrer" className="absolute top-6 left-6 md:top-8 md:left-8">
         <img src={branchLogo} alt="Branch logo" className="h-12 md:h-16 w-auto" />
-      </div>
+      </a>
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
