@@ -14,16 +14,13 @@ export function HeroSection({ onStart }: HeroSectionProps) {
         {/* Agency Logo/Badge */}
         <div className="mb-8 animate-fade-in">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 text-sm text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Persona Builder Tool
+            Branch's Marketing Toolkit
           </span>
         </div>
 
         {/* Main Headline */}
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-medium text-foreground mb-6 animate-slide-up leading-tight">
-          Make My
-          <br />
-          Persona
+          Persona Building Tool
         </h1>
 
         {/* Subtitle */}
