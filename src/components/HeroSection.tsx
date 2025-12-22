@@ -39,7 +39,7 @@ export function HeroSection({ onStart }: HeroSectionProps) {
 
       {/* Footer */}
       <footer className="absolute bottom-6 left-0 right-0 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Your Agency Name. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} BRANCH. All rights reserved.</p>
       </footer>
     </section>
   );
