@@ -1,7 +1,7 @@
 import { PersonaData } from "@/types/persona";
 import { AvatarIllustration } from "./AvatarIllustration";
 import { Button } from "./ui/button";
-import { ArrowLeft, Download, Share2, RotateCcw, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
@@ -22,20 +22,36 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     
     setIsDownloading(true);
     try {
+      // Get computed background color from the card
+      const cardStyles = window.getComputedStyle(cardRef.current);
+      const bgColor = cardStyles.backgroundColor || "#ffffff";
+      
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null,
+        backgroundColor: bgColor,
+        logging: false,
+        allowTaint: true,
+        onclone: (clonedDoc) => {
+          // Ensure all CSS variables are resolved in the cloned document
+          const clonedCard = clonedDoc.querySelector('[data-persona-card]');
+          if (clonedCard) {
+            (clonedCard as HTMLElement).style.backgroundColor = bgColor;
+          }
+        }
       });
       
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
       const pdf = new jsPDF({
-        orientation: "portrait",
+        orientation: imgWidth > imgHeight ? "landscape" : "portrait",
         unit: "px",
-        format: [canvas.width, canvas.height],
+        format: [imgWidth, imgHeight],
       });
       
-      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
       pdf.save(`${data.name || "persona"}-persona.pdf`);
       
       toast.success("PDF downloaded successfully!");
@@ -44,23 +60,6 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
       toast.error("Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);
-    }
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${data.name} - Buyer Persona`,
-          text: `Check out this buyer persona: ${data.name}, ${data.jobTitle}`,
-        });
-      } catch {
-        toast.info("Share cancelled");
-      }
-    } else {
-      toast.success("Link copied to clipboard!", {
-        description: "Share your persona with your team.",
-      });
     }
   };
 
@@ -73,26 +72,22 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Edit Persona
           </Button>
-          <div className="flex gap-3">
-            <Button variant="wizard-outline" onClick={handleShare}>
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
-            <Button variant="wizard" onClick={handleDownload} disabled={isDownloading}>
-              {isDownloading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4 mr-2" />
-              )}
-              {isDownloading ? "Generating..." : "Download PDF"}
-            </Button>
-          </div>
+          <Button variant="wizard" onClick={handleDownload} disabled={isDownloading}>
+            {isDownloading ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
+            {isDownloading ? "Generating..." : "Download PDF"}
+          </Button>
         </div>
 
         {/* Persona Card */}
         <div
           ref={cardRef}
+          data-persona-card
           className="bg-card rounded-3xl overflow-hidden shadow-card animate-scale-in"
+          style={{ backgroundColor: "hsl(var(--card))" }}
         >
           {/* Header */}
           <div className="bg-gradient-to-br from-primary/20 to-accent/10 p-8 md:p-12">
