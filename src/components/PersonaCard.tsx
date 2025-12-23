@@ -22,22 +22,30 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     
     setIsDownloading(true);
     try {
-      // Get computed background color from the card
-      const cardStyles = window.getComputedStyle(cardRef.current);
-      const bgColor = cardStyles.backgroundColor || "#ffffff";
-      
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: bgColor,
-        logging: false,
+        backgroundColor: "#ffffff",
+        logging: true,
         allowTaint: true,
-        onclone: (clonedDoc) => {
-          // Ensure all CSS variables are resolved in the cloned document
-          const clonedCard = clonedDoc.querySelector('[data-persona-card]');
-          if (clonedCard) {
-            (clonedCard as HTMLElement).style.backgroundColor = bgColor;
-          }
+        onclone: (clonedDoc, element) => {
+          // Resolve all CSS variables to computed values for html2canvas
+          const resolveStyles = (el: Element) => {
+            const computed = window.getComputedStyle(el);
+            const htmlEl = el as HTMLElement;
+            
+            // Apply computed colors directly
+            if (computed.color) htmlEl.style.color = computed.color;
+            if (computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)") {
+              htmlEl.style.backgroundColor = computed.backgroundColor;
+            }
+            if (computed.borderColor) htmlEl.style.borderColor = computed.borderColor;
+            
+            // Recursively process children
+            Array.from(el.children).forEach(resolveStyles);
+          };
+          
+          resolveStyles(element);
         }
       });
       
