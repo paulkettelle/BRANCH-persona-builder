@@ -1,9 +1,11 @@
 import { PersonaData } from "@/types/persona";
 import { AvatarIllustration } from "./AvatarIllustration";
 import { Button } from "./ui/button";
-import { ArrowLeft, Download, Share2, RotateCcw } from "lucide-react";
-import { useRef } from "react";
+import { ArrowLeft, Download, Share2, RotateCcw, Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 interface PersonaCardProps {
   data: PersonaData;
@@ -13,11 +15,36 @@ interface PersonaCardProps {
 
 export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
-    toast.success("Persona card ready to download!", {
-      description: "Right-click and save the card, or take a screenshot.",
-    });
+    if (!cardRef.current) return;
+    
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+      });
+      
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`${data.name || "persona"}-persona.pdf`);
+      
+      toast.success("PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleShare = async () => {
@@ -51,9 +78,13 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
               <Share2 className="w-4 h-4 mr-2" />
               Share
             </Button>
-            <Button variant="wizard" onClick={handleDownload}>
-              <Download className="w-4 h-4 mr-2" />
-              Download
+            <Button variant="wizard" onClick={handleDownload} disabled={isDownloading}>
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4 mr-2" />
+              )}
+              {isDownloading ? "Generating..." : "Download PDF"}
             </Button>
           </div>
         </div>
