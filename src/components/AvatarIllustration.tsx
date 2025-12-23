@@ -7,12 +7,12 @@ interface AvatarIllustrationProps {
 }
 
 const silhouetteColors = {
-  1: { bg: "hsl(47 55% 47%)", silhouette: "hsl(150 34% 17%)" },
-  2: { bg: "hsl(150 34% 25%)", silhouette: "hsl(47 55% 47%)" },
-  3: { bg: "hsl(47 40% 60%)", silhouette: "hsl(150 34% 17%)" },
-  4: { bg: "hsl(150 30% 35%)", silhouette: "hsl(40 33% 94%)" },
-  5: { bg: "hsl(47 55% 47%)", silhouette: "hsl(150 34% 25%)" },
-  6: { bg: "hsl(150 34% 17%)", silhouette: "hsl(47 55% 47%)" },
+  1: { bg: "#BA9F38", silhouette: "#1e3b29" },      // Gold bg, dark green silhouette
+  2: { bg: "#1e3b29", silhouette: "#FFF2DB" },      // Dark green bg, cream silhouette
+  3: { bg: "#B1BACB", silhouette: "#4F5761" },      // Silver bg, slate silhouette
+  4: { bg: "#4F5761", silhouette: "#BA9F38" },      // Slate bg, gold silhouette
+  5: { bg: "#FFF2DB", silhouette: "#1e3b29" },      // Cream bg, dark green silhouette
+  6: { bg: "#1e3b29", silhouette: "#BA9F38" },      // Dark green bg, gold silhouette
 };
 
 const sizes = {
