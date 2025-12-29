@@ -101,10 +101,10 @@ export const industryOptions = [
 ];
 
 export const companySizeOptions = [
-  "1-10 employees",
-  "11-50 employees",
-  "51-200 employees",
-  "201-500 employees",
-  "501-1000 employees",
-  "1000+ employees",
+  "1-9",
+  "10-49",
+  "50-149",
+  "150-499",
+  "500-1499",
+  "1500+",
 ];
