@@ -95,8 +95,8 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
             )}
             {step === 4 && (
               <MultiSelectStep
-                title="What challenges do they face?"
-                subtitle="Select the main pain points"
+                title="Describe their main pain points"
+                subtitle="Describe what they care most about"
                 options={challengeOptions}
                 selected={data.challenges}
                 onToggle={(item) => toggleArrayItem("challenges", item)}
