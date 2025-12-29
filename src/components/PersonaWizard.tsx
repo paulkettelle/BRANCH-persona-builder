@@ -206,6 +206,8 @@ function ProfessionalStep({
   data: PersonaData;
   updateData: (u: Partial<PersonaData>) => void;
 }) {
+  const isOtherSelected = data.industry !== "" && !industryOptions.slice(0, -1).includes(data.industry);
+  
   return (
     <div>
       <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
@@ -230,7 +232,7 @@ function ProfessionalStep({
             Industry
           </label>
           <div className="grid grid-cols-2 gap-2">
-            {industryOptions.map((industry) => (
+            {industryOptions.slice(0, -1).map((industry) => (
               <button
                 key={industry}
                 onClick={() => updateData({ industry })}
@@ -244,13 +246,33 @@ function ProfessionalStep({
                 {industry}
               </button>
             ))}
+            <button
+              onClick={() => updateData({ industry: isOtherSelected ? data.industry : "" })}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm transition-all",
+                isOtherSelected
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+            >
+              Other
+            </button>
           </div>
+          {isOtherSelected && (
+            <Input
+              className="mt-3"
+              placeholder="Enter your industry"
+              value={data.industry}
+              onChange={(e) => updateData({ industry: e.target.value })}
+              autoFocus
+            />
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
             Company Size
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {companySizeOptions.map((size) => (
               <button
                 key={size}
