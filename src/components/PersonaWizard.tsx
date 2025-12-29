@@ -23,7 +23,6 @@ interface PersonaWizardProps {
 }
 
 const stepTitles = [
-  "Choose Avatar",
   "Basic Info",
   "Professional",
   "Goals",
@@ -49,7 +48,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
   };
 
   const nextStep = () => {
-    if (step < 7) setStep(step + 1);
+    if (step < 6) setStep(step + 1);
     else onComplete(data);
   };
 
@@ -61,18 +60,16 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return true;
-      case 2:
         return data.name.trim() !== "";
-      case 3:
+      case 2:
         return data.jobTitle.trim() !== "";
-      case 4:
+      case 3:
         return data.primaryGoals.length > 0;
-      case 5:
+      case 4:
         return data.challenges.length > 0;
-      case 6:
+      case 5:
         return data.preferredChannels.length > 0;
-      case 7:
+      case 6:
         return true;
       default:
         return true;
@@ -82,25 +79,19 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
   return (
     <div className="min-h-screen flex flex-col px-4 py-8">
       <div className="max-w-3xl mx-auto w-full flex-1">
-        <ProgressBar currentStep={step} totalSteps={7} />
+        <ProgressBar currentStep={step} totalSteps={6} />
         <StepIndicator steps={stepTitles} currentStep={step} />
 
         <div className="bg-card rounded-2xl p-6 md:p-10 shadow-card animate-scale-in">
           {/* Step Content */}
           <div className="min-h-[400px]">
             {step === 1 && (
-              <AvatarStep
-                selected={data.avatarVariant}
-                onSelect={(v) => updateData({ avatarVariant: v })}
-              />
-            )}
-            {step === 2 && (
               <BasicInfoStep data={data} updateData={updateData} />
             )}
-            {step === 3 && (
+            {step === 2 && (
               <ProfessionalStep data={data} updateData={updateData} />
             )}
-            {step === 4 && (
+            {step === 3 && (
               <MultiSelectStep
                 title="What are their primary goals?"
                 subtitle="Select all that apply to your persona"
@@ -109,7 +100,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
                 onToggle={(item) => toggleArrayItem("primaryGoals", item)}
               />
             )}
-            {step === 5 && (
+            {step === 4 && (
               <MultiSelectStep
                 title="What challenges do they face?"
                 subtitle="Select the main pain points"
@@ -118,13 +109,13 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
                 onToggle={(item) => toggleArrayItem("challenges", item)}
               />
             )}
-            {step === 6 && (
+            {step === 5 && (
               <BehaviorStep
                 data={data}
                 toggleArrayItem={toggleArrayItem}
               />
             )}
-            {step === 7 && (
+            {step === 6 && (
               <SummaryStep data={data} updateData={updateData} />
             )}
           </div>
@@ -141,8 +132,8 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
               onClick={nextStep}
               disabled={!canProceed()}
             >
-              {step === 7 ? "Create Persona" : "Continue"}
-              {step === 7 ? (
+              {step === 6 ? "Create Persona" : "Continue"}
+              {step === 6 ? (
                 <Check className="w-4 h-4 ml-2" />
               ) : (
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -150,43 +141,6 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
             </Button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function AvatarStep({
-  selected,
-  onSelect,
-}: {
-  selected: 1 | 2 | 3 | 4 | 5 | 6;
-  onSelect: (v: 1 | 2 | 3 | 4 | 5 | 6) => void;
-}) {
-  const avatars: (1 | 2 | 3 | 4 | 5 | 6)[] = [1, 2, 3, 4, 5, 6];
-
-  return (
-    <div className="text-center">
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2">
-        Choose an avatar
-      </h2>
-      <p className="text-muted-foreground mb-8">
-        Select a visual representation for your persona
-      </p>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-4 md:gap-6 max-w-2xl mx-auto">
-        {avatars.map((v) => (
-          <button
-            key={v}
-            onClick={() => onSelect(v)}
-            className={cn(
-              "transition-all duration-300 rounded-full p-1",
-              selected === v
-                ? "ring-4 ring-primary ring-offset-4 ring-offset-card scale-110"
-                : "hover:scale-105 opacity-70 hover:opacity-100"
-            )}
-          >
-            <AvatarIllustration variant={v} size="lg" />
-          </button>
-        ))}
       </div>
     </div>
   );
