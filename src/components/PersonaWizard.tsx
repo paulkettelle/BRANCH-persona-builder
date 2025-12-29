@@ -7,7 +7,6 @@ import { AvatarIllustration } from "./AvatarIllustration";
 import {
   PersonaData,
   defaultPersonaData,
-  goalOptions,
   challengeOptions,
   channelOptions,
   sourceOptions,
@@ -64,7 +63,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
       case 2:
         return data.jobTitle.trim() !== "";
       case 3:
-        return data.primaryGoals.length > 0;
+        return data.primaryGoals.some((g) => g.trim() !== "");
       case 4:
         return data.challenges.length > 0;
       case 5:
@@ -92,13 +91,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
               <ProfessionalStep data={data} updateData={updateData} />
             )}
             {step === 3 && (
-              <MultiSelectStep
-                title="What are their primary goals?"
-                subtitle="Select all that apply to your persona"
-                options={goalOptions}
-                selected={data.primaryGoals}
-                onToggle={(item) => toggleArrayItem("primaryGoals", item)}
-              />
+              <GoalsStep data={data} updateData={updateData} />
             )}
             {step === 4 && (
               <MultiSelectStep
@@ -289,6 +282,46 @@ function ProfessionalStep({
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function GoalsStep({
+  data,
+  updateData,
+}: {
+  data: PersonaData;
+  updateData: (u: Partial<PersonaData>) => void;
+}) {
+  const updateGoal = (index: number, value: string) => {
+    const newGoals = [...data.primaryGoals];
+    newGoals[index] = value;
+    updateData({ primaryGoals: newGoals });
+  };
+
+  // Ensure we have 5 slots
+  const goals = [...data.primaryGoals];
+  while (goals.length < 5) goals.push("");
+
+  return (
+    <div>
+      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-8 text-center">
+        What are their primary goals?
+      </h2>
+      <div className="space-y-4 max-w-md mx-auto">
+        {[0, 1, 2, 3, 4].map((index) => (
+          <div key={index}>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Goal {index + 1}{index === 0 && " *"}
+            </label>
+            <Input
+              placeholder={`e.g., ${["Increase revenue", "Reduce costs", "Improve efficiency", "Grow market share", "Enhance customer experience"][index]}`}
+              value={goals[index]}
+              onChange={(e) => updateGoal(index, e.target.value)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
