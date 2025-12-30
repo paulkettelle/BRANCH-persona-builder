@@ -19,6 +19,8 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 interface PersonaWizardProps {
   onComplete: (data: PersonaData) => void;
   onBack: () => void;
+  initialData?: PersonaData | null;
+  initialStep?: number;
 }
 
 const stepTitles = [
@@ -30,9 +32,9 @@ const stepTitles = [
   "Summary",
 ];
 
-export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
-  const [step, setStep] = useState(1);
-  const [data, setData] = useState<PersonaData>(defaultPersonaData);
+export function PersonaWizard({ onComplete, onBack, initialData, initialStep = 1 }: PersonaWizardProps) {
+  const [step, setStep] = useState(initialStep);
+  const [data, setData] = useState<PersonaData>(initialData || defaultPersonaData);
 
   const updateData = (updates: Partial<PersonaData>) => {
     setData((prev) => ({ ...prev, ...updates }));
