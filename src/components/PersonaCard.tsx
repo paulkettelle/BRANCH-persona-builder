@@ -112,17 +112,17 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
                 <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
                   {data.age && (
                     <span className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
-                      {data.age}
+                      <span className="font-medium text-foreground">Age:</span> {data.age}
                     </span>
                   )}
                   {data.location && (
                     <span className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
-                      {data.location}
+                      <span className="font-medium text-foreground">Location:</span> {data.location}
                     </span>
                   )}
                   {data.companySize && (
                     <span className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
-                      {data.companySize}
+                      <span className="font-medium text-foreground">Company Size:</span> {data.companySize}
                     </span>
                   )}
                 </div>
