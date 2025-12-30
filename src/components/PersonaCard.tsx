@@ -22,30 +22,70 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     
     setIsDownloading(true);
     try {
+      // Get computed styles from the original element before cloning
+      const getComputedStyles = (el: Element): Map<Element, CSSStyleDeclaration> => {
+        const styleMap = new Map<Element, CSSStyleDeclaration>();
+        const collectStyles = (element: Element) => {
+          styleMap.set(element, window.getComputedStyle(element));
+          Array.from(element.children).forEach(collectStyles);
+        };
+        collectStyles(el);
+        return styleMap;
+      };
+
+      const originalStyles = getComputedStyles(cardRef.current);
+
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
-        logging: true,
+        logging: false,
         allowTaint: true,
-        onclone: (clonedDoc, element) => {
-          // Resolve all CSS variables to computed values for html2canvas
-          const resolveStyles = (el: Element) => {
-            const computed = window.getComputedStyle(el);
-            const htmlEl = el as HTMLElement;
+        onclone: (clonedDoc, clonedElement) => {
+          // Apply all computed styles to cloned elements
+          const applyStyles = (original: Element, cloned: Element) => {
+            const computed = originalStyles.get(original);
+            if (!computed) return;
             
-            // Apply computed colors directly
-            if (computed.color) htmlEl.style.color = computed.color;
-            if (computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)") {
-              htmlEl.style.backgroundColor = computed.backgroundColor;
+            const htmlEl = cloned as HTMLElement;
+            
+            // Apply all relevant computed styles
+            htmlEl.style.color = computed.color;
+            htmlEl.style.backgroundColor = computed.backgroundColor;
+            htmlEl.style.borderColor = computed.borderColor;
+            htmlEl.style.borderTopColor = computed.borderTopColor;
+            htmlEl.style.borderRightColor = computed.borderRightColor;
+            htmlEl.style.borderBottomColor = computed.borderBottomColor;
+            htmlEl.style.borderLeftColor = computed.borderLeftColor;
+            
+            // Handle gradients in background
+            if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+              // Parse CSS variable references in gradients
+              let bgImage = computed.backgroundImage;
+              htmlEl.style.backgroundImage = bgImage;
             }
-            if (computed.borderColor) htmlEl.style.borderColor = computed.borderColor;
+            
+            // Ensure text is visible
+            if (htmlEl.textContent && htmlEl.textContent.trim()) {
+              if (computed.color === 'rgba(0, 0, 0, 0)' || !computed.color) {
+                htmlEl.style.color = '#000000';
+              }
+            }
             
             // Recursively process children
-            Array.from(el.children).forEach(resolveStyles);
+            const originalChildren = Array.from(original.children);
+            const clonedChildren = Array.from(cloned.children);
+            originalChildren.forEach((origChild, index) => {
+              if (clonedChildren[index]) {
+                applyStyles(origChild, clonedChildren[index]);
+              }
+            });
           };
           
-          resolveStyles(element);
+          applyStyles(cardRef.current!, clonedElement);
+          
+          // Ensure the card itself has a solid background
+          (clonedElement as HTMLElement).style.backgroundColor = '#ffffff';
         }
       });
       
