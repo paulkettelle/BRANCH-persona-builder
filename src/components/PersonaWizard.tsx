@@ -65,7 +65,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
       case 3:
         return data.primaryGoals.some((g) => g.trim() !== "");
       case 4:
-        return data.challenges.length > 0;
+        return data.challenges.some((c) => c.trim() !== "");
       case 5:
         return data.preferredChannels.length > 0;
       case 6:
@@ -94,13 +94,7 @@ export function PersonaWizard({ onComplete, onBack }: PersonaWizardProps) {
               <GoalsStep data={data} updateData={updateData} />
             )}
             {step === 4 && (
-              <MultiSelectStep
-                title="Describe their main pain points"
-                subtitle="Describe what they care most about"
-                options={challengeOptions}
-                selected={data.challenges}
-                onToggle={(item) => toggleArrayItem("challenges", item)}
-              />
+              <ChallengesStep data={data} updateData={updateData} />
             )}
             {step === 5 && (
               <BehaviorStep
@@ -199,7 +193,26 @@ function ProfessionalStep({
   data: PersonaData;
   updateData: (u: Partial<PersonaData>) => void;
 }) {
-  const isOtherSelected = data.industry !== "" && !industryOptions.slice(0, -1).includes(data.industry);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const isStandardIndustry = industryOptions.slice(0, -1).includes(data.industry);
+  const isOtherSelected = showOtherInput || (data.industry !== "" && !isStandardIndustry);
+  
+  // Sync showOtherInput with data on mount
+  useState(() => {
+    if (data.industry !== "" && !isStandardIndustry) {
+      setShowOtherInput(true);
+    }
+  });
+  
+  const handleOtherClick = () => {
+    setShowOtherInput(true);
+    updateData({ industry: "" });
+  };
+  
+  const handleIndustrySelect = (industry: string) => {
+    setShowOtherInput(false);
+    updateData({ industry });
+  };
   
   return (
     <div>
@@ -228,10 +241,10 @@ function ProfessionalStep({
             {industryOptions.slice(0, -1).map((industry) => (
               <button
                 key={industry}
-                onClick={() => updateData({ industry })}
+                onClick={() => handleIndustrySelect(industry)}
                 className={cn(
                   "px-4 py-2 rounded-lg text-sm transition-all",
-                  data.industry === industry
+                  data.industry === industry && !showOtherInput
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 )}
@@ -240,7 +253,7 @@ function ProfessionalStep({
               </button>
             ))}
             <button
-              onClick={() => updateData({ industry: isOtherSelected ? data.industry : "" })}
+              onClick={handleOtherClick}
               className={cn(
                 "px-4 py-2 rounded-lg text-sm transition-all",
                 isOtherSelected
@@ -319,6 +332,49 @@ function GoalsStep({
               placeholder={`e.g., ${["Increase revenue", "Reduce costs", "Improve efficiency", "Grow market share", "Enhance customer experience"][index]}`}
               value={goals[index]}
               onChange={(e) => updateGoal(index, e.target.value)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ChallengesStep({
+  data,
+  updateData,
+}: {
+  data: PersonaData;
+  updateData: (u: Partial<PersonaData>) => void;
+}) {
+  const updateChallenge = (index: number, value: string) => {
+    const newChallenges = [...data.challenges];
+    newChallenges[index] = value;
+    updateData({ challenges: newChallenges });
+  };
+
+  // Ensure we have 5 slots
+  const challenges = [...data.challenges];
+  while (challenges.length < 5) challenges.push("");
+
+  return (
+    <div>
+      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+        What are their main pain points?
+      </h2>
+      <p className="text-muted-foreground mb-8 text-center">
+        Describe what they care most about
+      </p>
+      <div className="space-y-4 max-w-md mx-auto">
+        {[0, 1, 2, 3, 4].map((index) => (
+          <div key={index}>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Challenge {index + 1}{index === 0 && " *"}
+            </label>
+            <Input
+              placeholder={`e.g., ${["Limited budget", "Lack of time", "Finding qualified leads", "Keeping up with technology", "Competition"][index]}`}
+              value={challenges[index]}
+              onChange={(e) => updateChallenge(index, e.target.value)}
             />
           </div>
         ))}
