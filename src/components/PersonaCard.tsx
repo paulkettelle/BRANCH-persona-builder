@@ -275,7 +275,7 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
           {/* Footer */}
           <div className="px-8 md:px-12 py-6 bg-muted/50 text-center">
             <p className="text-sm text-muted-foreground">
-              Created with Persona Builder • {new Date().toLocaleDateString()}
+              Created by BRANCH's B2B Persona Builder | {new Date().toLocaleDateString()} | branchstrategies.co
             </p>
           </div>
         </div>
