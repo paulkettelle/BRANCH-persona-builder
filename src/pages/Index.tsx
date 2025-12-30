@@ -9,8 +9,11 @@ type View = "hero" | "wizard" | "result";
 const Index = () => {
   const [view, setView] = useState<View>("hero");
   const [personaData, setPersonaData] = useState<PersonaData | null>(null);
+  const [initialStep, setInitialStep] = useState(1);
 
   const handleStartWizard = () => {
+    setInitialStep(1);
+    setPersonaData(null);
     setView("wizard");
   };
 
@@ -20,6 +23,7 @@ const Index = () => {
   };
 
   const handleBackToWizard = () => {
+    setInitialStep(6); // Go back to Summary step
     setView("wizard");
   };
 
@@ -29,6 +33,7 @@ const Index = () => {
 
   const handleStartOver = () => {
     setPersonaData(null);
+    setInitialStep(1);
     setView("hero");
   };
 
@@ -39,6 +44,8 @@ const Index = () => {
         <PersonaWizard
           onComplete={handleCompleteWizard}
           onBack={handleBackToHero}
+          initialData={personaData}
+          initialStep={initialStep}
         />
       )}
       {view === "result" && personaData && (
