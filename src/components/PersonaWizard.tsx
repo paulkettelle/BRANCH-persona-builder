@@ -102,6 +102,7 @@ export function PersonaWizard({ onComplete, onBack, initialData, initialStep = 1
               <BehaviorStep
                 data={data}
                 toggleArrayItem={toggleArrayItem}
+                updateData={updateData}
               />
             )}
             {step === 6 && (
@@ -439,10 +440,39 @@ function MultiSelectStep({
 function BehaviorStep({
   data,
   toggleArrayItem,
+  updateData,
 }: {
   data: PersonaData;
   toggleArrayItem: (field: keyof PersonaData, item: string) => void;
+  updateData: (u: Partial<PersonaData>) => void;
 }) {
+  const [showOtherChannel, setShowOtherChannel] = useState(false);
+  const [showOtherSource, setShowOtherSource] = useState(false);
+  const [otherChannel, setOtherChannel] = useState("");
+  const [otherSource, setOtherSource] = useState("");
+
+  // Check if there are custom channels/sources not in the predefined options
+  const customChannels = data.preferredChannels.filter(c => !channelOptions.includes(c));
+  const customSources = data.informationSources.filter(s => !sourceOptions.includes(s));
+
+  const handleAddOtherChannel = () => {
+    if (otherChannel.trim()) {
+      const newChannels = [...data.preferredChannels, otherChannel.trim()];
+      updateData({ preferredChannels: newChannels });
+      setOtherChannel("");
+      setShowOtherChannel(false);
+    }
+  };
+
+  const handleAddOtherSource = () => {
+    if (otherSource.trim()) {
+      const newSources = [...data.informationSources, otherSource.trim()];
+      updateData({ informationSources: newSources });
+      setOtherSource("");
+      setShowOtherSource(false);
+    }
+  };
+
   return (
     <div>
       <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
@@ -471,7 +501,36 @@ function BehaviorStep({
                 {channel}
               </button>
             ))}
+            {customChannels.map((channel) => (
+              <button
+                key={channel}
+                onClick={() => toggleArrayItem("preferredChannels", channel)}
+                className="px-4 py-2 rounded-lg text-sm transition-all bg-primary text-primary-foreground"
+              >
+                {channel}
+              </button>
+            ))}
+            <button
+              onClick={() => setShowOtherChannel(true)}
+              className="px-4 py-2 rounded-lg text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
+            >
+              Other
+            </button>
           </div>
+          {showOtherChannel && (
+            <div className="flex gap-2 mt-3">
+              <Input
+                placeholder="Enter channel"
+                value={otherChannel}
+                onChange={(e) => setOtherChannel(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddOtherChannel()}
+                autoFocus
+              />
+              <Button variant="wizard" size="sm" onClick={handleAddOtherChannel}>
+                Add
+              </Button>
+            </div>
+          )}
         </div>
         <div>
           <h3 className="font-medium text-foreground mb-4">
@@ -492,7 +551,36 @@ function BehaviorStep({
                 {source}
               </button>
             ))}
+            {customSources.map((source) => (
+              <button
+                key={source}
+                onClick={() => toggleArrayItem("informationSources", source)}
+                className="px-4 py-2 rounded-lg text-sm transition-all bg-primary text-primary-foreground"
+              >
+                {source}
+              </button>
+            ))}
+            <button
+              onClick={() => setShowOtherSource(true)}
+              className="px-4 py-2 rounded-lg text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
+            >
+              Other
+            </button>
           </div>
+          {showOtherSource && (
+            <div className="flex gap-2 mt-3">
+              <Input
+                placeholder="Enter source"
+                value={otherSource}
+                onChange={(e) => setOtherSource(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddOtherSource()}
+                autoFocus
+              />
+              <Button variant="wizard" size="sm" onClick={handleAddOtherSource}>
+                Add
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
