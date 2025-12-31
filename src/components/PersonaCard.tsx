@@ -64,75 +64,113 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     }
   }, [handleFileSelect]);
 
+  // Brand colors for PDF export (resolved from CSS variables)
+  const pdfColors = {
+    background: "#1e3b29",
+    foreground: "#f5f0e3",
+    card: "#254434",
+    cardForeground: "#f5f0e3",
+    primary: "#ba9f38",
+    primaryForeground: "#ffffff",
+    muted: "#2d4d3d",
+    mutedForeground: "#7a9a8a",
+    destructive: "#ef4444",
+    accent: "#e8b4c8",
+    secondary: "#e8b4c8",
+    border: "#3a5f4d",
+  };
+
   const handleDownload = async () => {
     if (!cardRef.current) return;
     
     setIsDownloading(true);
     try {
-      // Get computed styles from the original element before cloning
-      const getComputedStyles = (el: Element): Map<Element, CSSStyleDeclaration> => {
-        const styleMap = new Map<Element, CSSStyleDeclaration>();
-        const collectStyles = (element: Element) => {
-          styleMap.set(element, window.getComputedStyle(element));
-          Array.from(element.children).forEach(collectStyles);
-        };
-        collectStyles(el);
-        return styleMap;
-      };
-
-      const originalStyles = getComputedStyles(cardRef.current);
-
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#ffffff",
+        backgroundColor: pdfColors.card,
         logging: false,
         allowTaint: true,
-        onclone: (clonedDoc, clonedElement) => {
-          // Apply all computed styles to cloned elements
-          const applyStyles = (original: Element, cloned: Element) => {
-            const computed = originalStyles.get(original);
-            if (!computed) return;
+        onclone: (_clonedDoc, clonedElement) => {
+          // Helper to apply inline styles recursively
+          const applyInlineStyles = (el: HTMLElement) => {
+            const classes = el.className || "";
             
-            const htmlEl = cloned as HTMLElement;
-            
-            // Apply all relevant computed styles
-            htmlEl.style.color = computed.color;
-            htmlEl.style.backgroundColor = computed.backgroundColor;
-            htmlEl.style.borderColor = computed.borderColor;
-            htmlEl.style.borderTopColor = computed.borderTopColor;
-            htmlEl.style.borderRightColor = computed.borderRightColor;
-            htmlEl.style.borderBottomColor = computed.borderBottomColor;
-            htmlEl.style.borderLeftColor = computed.borderLeftColor;
-            
-            // Handle gradients in background
-            if (computed.backgroundImage && computed.backgroundImage !== 'none') {
-              // Parse CSS variable references in gradients
-              let bgImage = computed.backgroundImage;
-              htmlEl.style.backgroundImage = bgImage;
+            // Background colors
+            if (classes.includes("bg-card") || el.hasAttribute("data-persona-card")) {
+              el.style.backgroundColor = pdfColors.card;
+            }
+            if (classes.includes("bg-muted/50")) {
+              el.style.backgroundColor = pdfColors.muted;
+            }
+            if (classes.includes("bg-muted")) {
+              el.style.backgroundColor = pdfColors.muted;
+            }
+            if (classes.includes("bg-primary")) {
+              el.style.backgroundColor = pdfColors.primary;
+            }
+            if (classes.includes("bg-destructive")) {
+              el.style.backgroundColor = pdfColors.destructive;
+            }
+            if (classes.includes("bg-accent")) {
+              el.style.backgroundColor = pdfColors.accent;
+            }
+            if (classes.includes("bg-secondary")) {
+              el.style.backgroundColor = pdfColors.secondary;
             }
             
-            // Ensure text is visible
-            if (htmlEl.textContent && htmlEl.textContent.trim()) {
-              if (computed.color === 'rgba(0, 0, 0, 0)' || !computed.color) {
-                htmlEl.style.color = '#000000';
+            // Gradient header
+            if (classes.includes("from-primary/20") || classes.includes("bg-gradient-to-br")) {
+              el.style.background = `linear-gradient(to bottom right, ${pdfColors.primary}33, ${pdfColors.accent}1a)`;
+            }
+            
+            // Text colors
+            if (classes.includes("text-foreground")) {
+              el.style.color = pdfColors.foreground;
+            }
+            if (classes.includes("text-muted-foreground")) {
+              el.style.color = pdfColors.mutedForeground;
+            }
+            if (classes.includes("text-primary")) {
+              el.style.color = pdfColors.primary;
+            }
+            if (classes.includes("text-primary-foreground")) {
+              el.style.color = pdfColors.primaryForeground;
+            }
+            if (classes.includes("text-destructive")) {
+              el.style.color = pdfColors.destructive;
+            }
+            if (classes.includes("text-background")) {
+              el.style.color = pdfColors.background;
+            }
+            
+            // Border colors
+            if (classes.includes("border-border") || classes.includes("border-b")) {
+              el.style.borderColor = pdfColors.border;
+            }
+            
+            // Handle headings (h1, h2, h3, etc.) - ensure they're visible
+            if (el.tagName.match(/^H[1-6]$/)) {
+              el.style.color = pdfColors.foreground;
+            }
+            
+            // Ensure all paragraph and span text is visible
+            if ((el.tagName === "P" || el.tagName === "SPAN") && !el.style.color) {
+              const parentBg = el.closest('[class*="bg-muted"]');
+              if (parentBg) {
+                el.style.color = pdfColors.mutedForeground;
               }
             }
             
-            // Recursively process children
-            const originalChildren = Array.from(original.children);
-            const clonedChildren = Array.from(cloned.children);
-            originalChildren.forEach((origChild, index) => {
-              if (clonedChildren[index]) {
-                applyStyles(origChild, clonedChildren[index]);
+            // Process children
+            Array.from(el.children).forEach((child) => {
+              if (child instanceof HTMLElement) {
+                applyInlineStyles(child);
               }
             });
           };
           
-          applyStyles(cardRef.current!, clonedElement);
-          
-          // Ensure the card itself has a solid background
-          (clonedElement as HTMLElement).style.backgroundColor = '#ffffff';
+          applyInlineStyles(clonedElement as HTMLElement);
         }
       });
       
