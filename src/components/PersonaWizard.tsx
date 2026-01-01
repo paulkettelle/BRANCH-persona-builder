@@ -78,14 +78,14 @@ export function PersonaWizard({ onComplete, onBack, initialData, initialStep = 1
   };
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-8">
+    <div className="min-h-screen flex flex-col px-3 sm:px-4 py-4 sm:py-6 md:py-8">
       <div className="max-w-3xl mx-auto w-full flex-1">
         <ProgressBar currentStep={step} totalSteps={6} />
         <StepIndicator steps={stepTitles} currentStep={step} />
 
-        <div className="bg-card rounded-2xl p-6 md:p-10 shadow-card animate-scale-in">
+        <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-card animate-scale-in">
           {/* Step Content */}
-          <div className="min-h-[400px]">
+          <div className="min-h-[320px] sm:min-h-[360px] md:min-h-[400px]">
             {step === 1 && (
               <BasicInfoStep data={data} updateData={updateData} />
             )}
@@ -111,8 +111,8 @@ export function PersonaWizard({ onComplete, onBack, initialData, initialStep = 1
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-border">
-            <Button variant="wizard-outline" size="lg" onClick={prevStep}>
+          <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border">
+            <Button variant="wizard-outline" size="lg" onClick={prevStep} className="text-sm sm:text-base">
               <ArrowLeft className="w-4 h-4 mr-2" />
               {step === 1 ? "Home" : "Back"}
             </Button>
@@ -121,6 +121,7 @@ export function PersonaWizard({ onComplete, onBack, initialData, initialStep = 1
               size="lg"
               onClick={nextStep}
               disabled={!canProceed()}
+              className="text-sm sm:text-base"
             >
               {step === 6 ? "Create Persona" : "Continue"}
               {step === 6 ? (
@@ -145,13 +146,13 @@ function BasicInfoStep({
 }) {
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         Basic Information
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">
         Tell us about your ideal customer
       </p>
-      <div className="space-y-6 max-w-md mx-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-md mx-auto">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
             Persona Name *
@@ -162,7 +163,7 @@ function BasicInfoStep({
             onChange={(e) => updateData({ name: e.target.value })}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
               Age Range
@@ -219,13 +220,13 @@ function ProfessionalStep({
   
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         Professional Details
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">
         What's their work environment like?
       </p>
-      <div className="space-y-6 max-w-md mx-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-md mx-auto">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
             Job Title *
@@ -240,13 +241,13 @@ function ProfessionalStep({
           <label className="block text-sm font-medium text-foreground mb-2">
             Industry
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             {industryOptions.slice(0, -1).map((industry) => (
               <button
                 key={industry}
                 onClick={() => handleIndustrySelect(industry)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm transition-all",
+                  "px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all",
                   data.industry === industry && !showOtherInput
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -258,7 +259,7 @@ function ProfessionalStep({
             <button
               onClick={handleOtherClick}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm transition-all",
+                "px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all",
                 isOtherSelected
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -281,13 +282,13 @@ function ProfessionalStep({
           <label className="block text-sm font-medium text-foreground mb-2">
             Company Size
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
             {companySizeOptions.map((size) => (
               <button
                 key={size}
                 onClick={() => updateData({ companySize: size })}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm transition-all",
+                  "px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all",
                   data.companySize === size
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -322,13 +323,13 @@ function GoalsStep({
 
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-8 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-6 sm:mb-8 text-center">
         What are their primary goals?
       </h2>
-      <div className="space-y-4 max-w-md mx-auto">
+      <div className="space-y-3 sm:space-y-4 max-w-md mx-auto">
         {[0, 1, 2, 3, 4].map((index) => (
           <div key={index}>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-medium text-foreground mb-1.5 sm:mb-2">
               Goal {index + 1}{index === 0 && " *"}
             </label>
             <Input
@@ -362,16 +363,16 @@ function ChallengesStep({
 
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         What are their main pain points?
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">
         Describe what they care most about
       </p>
-      <div className="space-y-4 max-w-md mx-auto">
+      <div className="space-y-3 sm:space-y-4 max-w-md mx-auto">
         {[0, 1, 2, 3, 4].map((index) => (
           <div key={index}>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-medium text-foreground mb-1.5 sm:mb-2">
               Challenge {index + 1}{index === 0 && " *"}
             </label>
             <Input
@@ -401,17 +402,17 @@ function MultiSelectStep({
 }) {
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         {title}
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">{subtitle}</p>
-      <div className="grid grid-cols-2 gap-3 max-w-xl mx-auto">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">{subtitle}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 max-w-xl mx-auto">
         {options.map((option) => (
           <button
             key={option}
             onClick={() => onToggle(option)}
             className={cn(
-              "px-4 py-3 rounded-lg text-sm transition-all text-left flex items-center gap-3",
+              "px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-xs sm:text-sm transition-all text-left flex items-center gap-2 sm:gap-3",
               selected.includes(option)
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -419,14 +420,14 @@ function MultiSelectStep({
           >
             <div
               className={cn(
-                "w-5 h-5 rounded border-2 flex items-center justify-center transition-all",
+                "w-4 h-4 sm:w-5 sm:h-5 rounded border-2 flex items-center justify-center transition-all flex-shrink-0",
                 selected.includes(option)
                   ? "bg-primary-foreground border-primary-foreground"
                   : "border-current"
               )}
             >
               {selected.includes(option) && (
-                <Check className="w-3 h-3 text-primary" />
+                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
               )}
             </div>
             {option}
@@ -475,24 +476,24 @@ function BehaviorStep({
 
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         Behavior & Preferences
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">
         How do they research and communicate?
       </p>
-      <div className="space-y-8 max-w-xl mx-auto">
+      <div className="space-y-6 sm:space-y-8 max-w-xl mx-auto">
         <div>
-          <h3 className="font-medium text-foreground mb-4">
+          <h3 className="font-medium text-foreground mb-3 sm:mb-4 text-sm sm:text-base">
             Preferred Communication Channels *
           </h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             {channelOptions.map((channel) => (
               <button
                 key={channel}
                 onClick={() => toggleArrayItem("preferredChannels", channel)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm transition-all",
+                  "px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all",
                   data.preferredChannels.includes(channel)
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -505,14 +506,14 @@ function BehaviorStep({
               <button
                 key={channel}
                 onClick={() => toggleArrayItem("preferredChannels", channel)}
-                className="px-4 py-2 rounded-lg text-sm transition-all bg-primary text-primary-foreground"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all bg-primary text-primary-foreground"
               >
                 {channel}
               </button>
             ))}
             <button
               onClick={() => setShowOtherChannel(true)}
-              className="px-4 py-2 rounded-lg text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
             >
               Other
             </button>
@@ -533,16 +534,16 @@ function BehaviorStep({
           )}
         </div>
         <div>
-          <h3 className="font-medium text-foreground mb-4">
+          <h3 className="font-medium text-foreground mb-3 sm:mb-4 text-sm sm:text-base">
             Information Sources
           </h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
             {sourceOptions.map((source) => (
               <button
                 key={source}
                 onClick={() => toggleArrayItem("informationSources", source)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm transition-all",
+                  "px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all",
                   data.informationSources.includes(source)
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -555,14 +556,14 @@ function BehaviorStep({
               <button
                 key={source}
                 onClick={() => toggleArrayItem("informationSources", source)}
-                className="px-4 py-2 rounded-lg text-sm transition-all bg-primary text-primary-foreground"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all bg-primary text-primary-foreground"
               >
                 {source}
               </button>
             ))}
             <button
               onClick={() => setShowOtherSource(true)}
-              className="px-4 py-2 rounded-lg text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all bg-muted text-muted-foreground hover:bg-muted/80"
             >
               Other
             </button>
@@ -596,15 +597,15 @@ function SummaryStep({
 }) {
   return (
     <div>
-      <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2 text-center">
+      <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground mb-2 text-center">
         Final Touches
       </h2>
-      <p className="text-muted-foreground mb-8 text-center">
+      <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm sm:text-base">
         Add a quote and bio to bring your persona to life
       </p>
-      <div className="space-y-6 max-w-lg mx-auto">
-        <div className="flex justify-center mb-6">
-          <AvatarIllustration variant={data.avatarVariant} size="lg" />
+      <div className="space-y-4 sm:space-y-6 max-w-lg mx-auto">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <AvatarIllustration variant={data.avatarVariant} size="lg" className="w-24 h-24 sm:w-32 sm:h-32" />
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
