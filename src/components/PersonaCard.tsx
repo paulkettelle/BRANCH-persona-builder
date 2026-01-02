@@ -259,13 +259,13 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
           {/* Details Grid */}
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6 md:p-8 lg:p-12">
             {/* Goals */}
-            {data.primaryGoals.length > 0 && (
+            {data.primaryGoals.filter(g => g.trim()).length > 0 && (
               <div>
                 <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-primary decoration-2 underline-offset-4">
                   Goals
                 </h3>
                 <ul className="space-y-1.5 sm:space-y-2">
-                  {data.primaryGoals.map((goal) => (
+                  {data.primaryGoals.filter(g => g.trim()).map((goal) => (
                     <li
                       key={goal}
                       className="text-muted-foreground flex items-center gap-2 text-sm sm:text-base"
@@ -279,13 +279,13 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             )}
 
             {/* Challenges */}
-            {data.challenges.length > 0 && (
+            {data.challenges.filter(c => c.trim()).length > 0 && (
               <div>
                 <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-destructive decoration-2 underline-offset-4">
                   Challenges
                 </h3>
                 <ul className="space-y-1.5 sm:space-y-2">
-                  {data.challenges.map((challenge) => (
+                  {data.challenges.filter(c => c.trim()).map((challenge) => (
                     <li
                       key={challenge}
                       className="text-muted-foreground flex items-center gap-2 text-sm sm:text-base"
