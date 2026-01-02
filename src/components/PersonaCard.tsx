@@ -268,9 +268,9 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
                   {data.primaryGoals.map((goal) => (
                     <li
                       key={goal}
-                      className="text-muted-foreground flex items-start gap-2 text-sm sm:text-base"
+                      className="text-muted-foreground flex items-center gap-2 text-sm sm:text-base"
                     >
-                      <span className="text-primary text-base sm:text-lg leading-none mt-0.5">•</span>
+                      <span className="text-primary text-base sm:text-lg leading-none">•</span>
                       <span>{goal}</span>
                     </li>
                   ))}
@@ -288,9 +288,9 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
                   {data.challenges.map((challenge) => (
                     <li
                       key={challenge}
-                      className="text-muted-foreground flex items-start gap-2 text-sm sm:text-base"
+                      className="text-muted-foreground flex items-center gap-2 text-sm sm:text-base"
                     >
-                      <span className="text-destructive text-base sm:text-lg leading-none mt-0.5">•</span>
+                      <span className="text-destructive text-base sm:text-lg leading-none">•</span>
                       <span>{challenge}</span>
                     </li>
                   ))}
