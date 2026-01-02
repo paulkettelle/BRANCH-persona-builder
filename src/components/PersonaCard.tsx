@@ -261,8 +261,7 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             {/* Goals */}
             {data.primaryGoals.length > 0 && (
               <div>
-                <h3 className="font-medium text-foreground mb-2 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary" />
+                <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-primary decoration-2 underline-offset-4">
                   Goals
                 </h3>
                 <ul className="space-y-1.5 sm:space-y-2">
@@ -282,8 +281,7 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             {/* Challenges */}
             {data.challenges.length > 0 && (
               <div>
-                <h3 className="font-medium text-foreground mb-2 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-destructive" />
+                <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-destructive decoration-2 underline-offset-4">
                   Challenges
                 </h3>
                 <ul className="space-y-1.5 sm:space-y-2">
@@ -303,8 +301,7 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             {/* Channels */}
             {data.preferredChannels.length > 0 && (
               <div>
-                <h3 className="font-medium text-foreground mb-2 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-accent" />
+                <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-accent decoration-2 underline-offset-4">
                   Preferred Channels
                 </h3>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -323,8 +320,7 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
             {/* Information Sources */}
             {data.informationSources.length > 0 && (
               <div>
-                <h3 className="font-medium text-foreground mb-2 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-secondary" />
+                <h3 className="font-medium text-foreground mb-2 sm:mb-4 text-sm sm:text-base underline decoration-secondary decoration-2 underline-offset-4">
                   Information Sources
                 </h3>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
