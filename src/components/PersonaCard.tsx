@@ -85,110 +85,43 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     
     setIsDownloading(true);
     try {
-      // Get the actual computed styles from the card
       const cardElement = cardRef.current;
+      
+      // Create a map of original elements to their computed styles
+      const styleMap = new Map<number, CSSStyleDeclaration>();
+      const originalElements = cardElement.querySelectorAll('*');
+      originalElements.forEach((el, index) => {
+        styleMap.set(index, window.getComputedStyle(el));
+      });
       
       const canvas = await html2canvas(cardElement, {
         scale: 2,
         useCORS: true,
         backgroundColor: pdfColors.card,
-        logging: true,
+        logging: false,
         allowTaint: true,
         windowWidth: cardElement.scrollWidth,
         windowHeight: cardElement.scrollHeight,
         onclone: (_clonedDoc, clonedElement) => {
-          // Force all elements to use computed styles
-          const processElement = (el: Element) => {
+          // Apply computed styles from original to cloned elements
+          const clonedElements = clonedElement.querySelectorAll('*');
+          
+          clonedElements.forEach((el, index) => {
             if (!(el instanceof HTMLElement)) return;
             
-            const computedStyle = window.getComputedStyle(
-              cardElement.querySelector(`[data-persona-card]`) === cardElement 
-                ? cardElement 
-                : el
-            );
+            const originalStyle = styleMap.get(index);
+            if (!originalStyle) return;
             
-            // Get class list safely
-            const classList = el.classList ? Array.from(el.classList) : [];
-            const classString = classList.join(' ');
-            
-            // Apply background colors
-            if (classString.includes('bg-card') || el.hasAttribute('data-persona-card')) {
-              el.style.backgroundColor = pdfColors.card;
-            }
-            if (classString.includes('bg-muted/50')) {
-              el.style.backgroundColor = pdfColors.muted;
-              el.style.opacity = '0.5';
-            }
-            if (classString.includes('bg-muted') && !classString.includes('bg-muted/')) {
-              el.style.backgroundColor = pdfColors.muted;
-            }
-            if (classString.includes('bg-primary')) {
-              el.style.backgroundColor = pdfColors.primary;
-            }
-            if (classString.includes('bg-destructive')) {
-              el.style.backgroundColor = pdfColors.destructive;
-            }
-            if (classString.includes('bg-accent')) {
-              el.style.backgroundColor = pdfColors.accent;
-            }
-            if (classString.includes('bg-secondary')) {
-              el.style.backgroundColor = pdfColors.secondary;
-            }
-            
-            // Gradient header
-            if (classString.includes('bg-gradient-to-br')) {
-              el.style.background = `linear-gradient(to bottom right, ${pdfColors.primary}33, ${pdfColors.accent}1a)`;
-            }
-            
-            // Text colors
-            if (classString.includes('text-foreground')) {
-              el.style.color = pdfColors.foreground;
-            }
-            if (classString.includes('text-muted-foreground')) {
-              el.style.color = pdfColors.mutedForeground;
-            }
-            if (classString.includes('text-primary')) {
-              el.style.color = pdfColors.primary;
-            }
-            if (classString.includes('text-primary-foreground')) {
-              el.style.color = pdfColors.primaryForeground;
-            }
-            if (classString.includes('text-destructive')) {
-              el.style.color = pdfColors.destructive;
-            }
-            if (classString.includes('text-background')) {
-              el.style.color = pdfColors.background;
-            }
-            
-            // Border colors
-            if (classString.includes('border-border') || classString.includes('border-b')) {
-              el.style.borderColor = pdfColors.border;
-            }
-            
-            // Handle headings
-            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
-              if (!el.style.color) {
-                el.style.color = pdfColors.foreground;
-              }
-            }
-            
-            // Ensure list items and paragraphs have color
-            if (['P', 'SPAN', 'LI'].includes(el.tagName)) {
-              if (!el.style.color && !classString.includes('text-')) {
-                el.style.color = pdfColors.mutedForeground;
-              }
-            }
-            
-            // Process all children
-            Array.from(el.children).forEach(processElement);
-          };
+            // Apply key visual properties directly
+            el.style.color = originalStyle.color;
+            el.style.backgroundColor = originalStyle.backgroundColor;
+            el.style.borderColor = originalStyle.borderColor;
+            el.style.opacity = originalStyle.opacity;
+          });
           
-          // Set the root element styles
+          // Set root background explicitly
           const root = clonedElement as HTMLElement;
           root.style.backgroundColor = pdfColors.card;
-          root.style.color = pdfColors.foreground;
-          
-          processElement(root);
         }
       });
       
