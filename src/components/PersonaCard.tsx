@@ -85,92 +85,110 @@ export function PersonaCard({ data, onBack, onStartOver }: PersonaCardProps) {
     
     setIsDownloading(true);
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      // Get the actual computed styles from the card
+      const cardElement = cardRef.current;
+      
+      const canvas = await html2canvas(cardElement, {
         scale: 2,
         useCORS: true,
         backgroundColor: pdfColors.card,
-        logging: false,
+        logging: true,
         allowTaint: true,
+        windowWidth: cardElement.scrollWidth,
+        windowHeight: cardElement.scrollHeight,
         onclone: (_clonedDoc, clonedElement) => {
-          // Helper to apply inline styles recursively
-          const applyInlineStyles = (el: HTMLElement) => {
-            const classes = el.className || "";
+          // Force all elements to use computed styles
+          const processElement = (el: Element) => {
+            if (!(el instanceof HTMLElement)) return;
             
-            // Background colors
-            if (classes.includes("bg-card") || el.hasAttribute("data-persona-card")) {
+            const computedStyle = window.getComputedStyle(
+              cardElement.querySelector(`[data-persona-card]`) === cardElement 
+                ? cardElement 
+                : el
+            );
+            
+            // Get class list safely
+            const classList = el.classList ? Array.from(el.classList) : [];
+            const classString = classList.join(' ');
+            
+            // Apply background colors
+            if (classString.includes('bg-card') || el.hasAttribute('data-persona-card')) {
               el.style.backgroundColor = pdfColors.card;
             }
-            if (classes.includes("bg-muted/50")) {
+            if (classString.includes('bg-muted/50')) {
+              el.style.backgroundColor = pdfColors.muted;
+              el.style.opacity = '0.5';
+            }
+            if (classString.includes('bg-muted') && !classString.includes('bg-muted/')) {
               el.style.backgroundColor = pdfColors.muted;
             }
-            if (classes.includes("bg-muted")) {
-              el.style.backgroundColor = pdfColors.muted;
-            }
-            if (classes.includes("bg-primary")) {
+            if (classString.includes('bg-primary')) {
               el.style.backgroundColor = pdfColors.primary;
             }
-            if (classes.includes("bg-destructive")) {
+            if (classString.includes('bg-destructive')) {
               el.style.backgroundColor = pdfColors.destructive;
             }
-            if (classes.includes("bg-accent")) {
+            if (classString.includes('bg-accent')) {
               el.style.backgroundColor = pdfColors.accent;
             }
-            if (classes.includes("bg-secondary")) {
+            if (classString.includes('bg-secondary')) {
               el.style.backgroundColor = pdfColors.secondary;
             }
             
             // Gradient header
-            if (classes.includes("from-primary/20") || classes.includes("bg-gradient-to-br")) {
+            if (classString.includes('bg-gradient-to-br')) {
               el.style.background = `linear-gradient(to bottom right, ${pdfColors.primary}33, ${pdfColors.accent}1a)`;
             }
             
             // Text colors
-            if (classes.includes("text-foreground")) {
+            if (classString.includes('text-foreground')) {
               el.style.color = pdfColors.foreground;
             }
-            if (classes.includes("text-muted-foreground")) {
+            if (classString.includes('text-muted-foreground')) {
               el.style.color = pdfColors.mutedForeground;
             }
-            if (classes.includes("text-primary")) {
+            if (classString.includes('text-primary')) {
               el.style.color = pdfColors.primary;
             }
-            if (classes.includes("text-primary-foreground")) {
+            if (classString.includes('text-primary-foreground')) {
               el.style.color = pdfColors.primaryForeground;
             }
-            if (classes.includes("text-destructive")) {
+            if (classString.includes('text-destructive')) {
               el.style.color = pdfColors.destructive;
             }
-            if (classes.includes("text-background")) {
+            if (classString.includes('text-background')) {
               el.style.color = pdfColors.background;
             }
             
             // Border colors
-            if (classes.includes("border-border") || classes.includes("border-b")) {
+            if (classString.includes('border-border') || classString.includes('border-b')) {
               el.style.borderColor = pdfColors.border;
             }
             
-            // Handle headings (h1, h2, h3, etc.) - ensure they're visible
-            if (el.tagName.match(/^H[1-6]$/)) {
-              el.style.color = pdfColors.foreground;
+            // Handle headings
+            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
+              if (!el.style.color) {
+                el.style.color = pdfColors.foreground;
+              }
             }
             
-            // Ensure all paragraph and span text is visible
-            if ((el.tagName === "P" || el.tagName === "SPAN") && !el.style.color) {
-              const parentBg = el.closest('[class*="bg-muted"]');
-              if (parentBg) {
+            // Ensure list items and paragraphs have color
+            if (['P', 'SPAN', 'LI'].includes(el.tagName)) {
+              if (!el.style.color && !classString.includes('text-')) {
                 el.style.color = pdfColors.mutedForeground;
               }
             }
             
-            // Process children
-            Array.from(el.children).forEach((child) => {
-              if (child instanceof HTMLElement) {
-                applyInlineStyles(child);
-              }
-            });
+            // Process all children
+            Array.from(el.children).forEach(processElement);
           };
           
-          applyInlineStyles(clonedElement as HTMLElement);
+          // Set the root element styles
+          const root = clonedElement as HTMLElement;
+          root.style.backgroundColor = pdfColors.card;
+          root.style.color = pdfColors.foreground;
+          
+          processElement(root);
         }
       });
       
